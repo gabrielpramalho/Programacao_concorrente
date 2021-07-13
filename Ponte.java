@@ -39,6 +39,7 @@ public class Ponte extends Thread {
     
     public synchronized void passou(){
         this.ocupado = false;
+        notifyAll();
     }
     
     
