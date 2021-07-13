@@ -11,54 +11,34 @@ import java.util.Objects;
  *
  * @author Gabriel
  */
-public class Ponte {
-    String ponte[];
-    Integer frente, fim, tamanhoMax, tamanhoAtual;
-    
-    
-    public Ponte (int tamanhoMax){
-        ponte = new String[tamanhoMax];
-        this.tamanhoMax = tamanhoMax;
-        frente = -1;
-        fim = -1;
-        this.tamanhoAtual = 0;
+public class Ponte extends Thread {
+    boolean ocupado;
+
+    public Ponte() {
+        this.ocupado = false;
     }
     
     public synchronized  void entrar (String item){
         
         try{
-            while(Objects.equals(tamanhoAtual, tamanhoMax)){
+            while(this.ocupado){
                 System.out.println("Ponte Ocupada!");
                 wait();
             }
             
-            fim = (fim + 1) % tamanhoMax;
-            ponte[fim] = item;
-            tamanhoAtual++;
-            
-            if(frente == -1){
-                frente = fim;
-            }
+            System.out.println(item+" passando");
+
             Thread.sleep(1000);
-            notifyAll();
+            this.ocupado = true;
+            
+            passou();
+            
+            
         }catch( InterruptedException e){}
     }
     
-    public synchronized String retirar() throws InterruptedException{
-        String item = "";
-        while(tamanhoAtual == 0){
-            System.out.println("Ponte Vazia");
-            wait();
-        }
-       
-        item = ponte[frente];
-        ponte[frente] = null;
-        frente = (frente+1) % tamanhoMax;
-       
-        tamanhoAtual--;
-        Thread.sleep(1000);
-        notifyAll();
-        return item;
+    public synchronized void passou(){
+        this.ocupado = false;
     }
     
     
